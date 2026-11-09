@@ -1,0 +1,38 @@
+# id	kind	version	transfer_encoding (| between header lines, - none)	content_length (same)	connection	hand_pre	hand_post
+# hand_*: verdict against the RFC 9112 yardstick, derived by hand from the pre/post code lines
+p01_http10_te_chunked	pos	10	chunked	-	-	DESYNC	AGREE
+p02_http10_no_length	pos	10	-	-	keep-alive	DESYNC	AGREE
+p03_http10_te_and_cl	pos	10	chunked	5	-	DESYNC	AGREE
+p04_chunked_then_identity	pos	11	chunked|identity	-	-	DESYNC	AGREE
+p05_identity_then_chunked	pos	11	identity|chunked	5	-	DESYNC	AGREE
+p06_gzip_chunked_list	pos	11	gzip, chunked	-	-	DESYNC	AGREE
+p07_chunked_gzip_list	pos	11	chunked, gzip	-	-	DESYNC	AGREE
+p08_http10_te_keepalive	pos	10	chunked	-	keep-alive	DESYNC	AGREE
+p09_only_identity	pos	11	identity	-	-	DESYNC	AGREE
+p10_te_cl_reuse	pos	11	chunked	5	-	KEEPALIVE	AGREE
+p11_http10_te_identity	pos	10	identity	10	keep-alive	DESYNC	AGREE
+n01_no_body	neg	11	-	-	-	AGREE	AGREE
+n02_cl	neg	11	-	5	-	AGREE	AGREE
+n03_chunked	neg	11	chunked	-	-	AGREE	AGREE
+n04_chunked_case	neg	11	Chunked	-	-	AGREE	AGREE
+n05_http10_cl	neg	10	-	5	-	AGREE	AGREE
+n06_http10_cl_keepalive	neg	10	-	5	keep-alive	AGREE	AGREE
+n07_cl_close	neg	11	-	0	close	AGREE	AGREE
+n08_two_cl_differ	neg	11	-	5|6	-	AGREE	AGREE
+n09_te_cl_close	neg	11	chunked	5	close	AGREE	AGREE
+e01_cl_plus	edge	11	-	+5	-	DESYNC	DESYNC
+e02_cl_minus_zero	edge	11	-	-0	-	DESYNC	DESYNC
+e03_cl_leading_zero	edge	11	-	05	-	AGREE	AGREE
+e04_chunked_trailing_comma	edge	11	chunked,	-	-	DESYNC	STRICTER
+e05_chunked_twice	edge	11	chunked|chunked	-	-	AGREE	AGREE
+e06_two_cl_same	edge	11	-	5|5	-	STRICTER	STRICTER
+e07_cl_list_same	edge	11	-	5, 5	-	DESYNC	STRICTER
+e08_te_empty	edge	11		-	-	DESYNC	AGREE
+e09_cl_overflow	edge	11	-	9223372036854775808	-	DESYNC	AGREE
+e10_cl_invalid	edge	11	-	abc	-	DESYNC	AGREE
+e11_http10_cl_invalid	edge	10	-	abc	-	DESYNC	AGREE
+e12_cl_negative	edge	11	-	-1	-	DESYNC	AGREE
+b01_http20	bad	20	-	-	-	BAD_INPUT	BAD_INPUT
+b02_leading_space	bad	11	 chunked	-	-	BAD_INPUT	BAD_INPUT
+b03_nine_cl	bad	11	-	1|1|1|1|1|1|1|1|1	-	BAD_INPUT	BAD_INPUT
+b04_conn_upgrade	bad	11	-	-	upgrade	BAD_INPUT	BAD_INPUT
